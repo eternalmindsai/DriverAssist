@@ -7,6 +7,8 @@
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SHORT_SERVICE" />
 
     <application
         android:allowBackup="true"
@@ -39,6 +41,19 @@
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
         </receiver>
+        <service
+    android:name=".SmsSenderService"
+    android:foregroundServiceType="shortService"
+    android:exported="false" />
+
+<receiver
+    android:name=".SmsStatusReceiver"
+    android:exported="false">
+    <intent-filter>
+        <action android:name="com.driverassist.SMS_SENT" />
+        <action android:name="com.driverassist.SMS_DELIVERED" />
+    </intent-filter>
+</receiver>
 
     </application>
 
