@@ -22,6 +22,11 @@ jobs:
           unzip -q gradle.zip
           echo "$PWD/gradle-8.2/bin" >> $GITHUB_PATH
 
+      - name: Fix gradle.properties
+        run: |
+          echo "android.useAndroidX=true" >> DriverAssist2/gradle.properties
+          echo "android.enableJetifier=true" >> DriverAssist2/gradle.properties
+
       - name: Generate Gradle Wrapper
         run: |
           cd DriverAssist2
