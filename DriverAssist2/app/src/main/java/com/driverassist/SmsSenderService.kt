@@ -51,42 +51,33 @@ class SmsSenderService : Service() {
         return START_NOT_STICKY
     }
 
-    private fun sendSms(phoneNumber: String, timestamp: Long) {
-        try {
-            val sentIntent = Intent(ACTION_SMS_SENT).apply {
-                putExtra(EXTRA_TIMESTAMP, timestamp)
-            }
-            val deliveredIntent = Intent(ACTION_SMS_DELIVERED).apply {
-                putExtra(EXTRA_TIMESTAMP, timestamp)
-            }
-
-            val sentPI = PendingIntent.getBroadcast(
-                this, timestamp.toInt(), sentIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-            val deliveredPI = PendingIntent.getBroadcast(
-                this, timestamp.toInt(), deliveredIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-
-            val smsManager: SmsManager = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                val subId = SubscriptionManager.getDefaultSmsSubscriptionId()
-                if (subId != SubscriptionManager.INVALID_SUBSCRIPTION_ID) {
-                    getSystemService(SmsManager::class.java).createForSubscriptionId(subId)
-                } else {
-                    getSystemService(SmsManager::class.java)
-                }
+private fun sendSms(phoneNumber: String, timestamp: Long) {
+    try {
+        val smsManager: SmsManager = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val subId = SubscriptionManager.getDefaultSmsSubscriptionId()
+            if (subId != SubscriptionManager.INVALID_SUBSCRIPTION_ID) {
+                getSystemService(SmsManager::class.java).createForSubscriptionId(subId)
             } else {
-                @Suppress("DEPRECATION")
-                SmsManager.getDefault()
+                getSystemService(SmsManager::class.java)
             }
-
-            smsManager.sendTextMessage(phoneNumber, null, SMS_MESSAGE, sentPI, deliveredPI)
-            Log.d(TAG, "SMS sent to $phoneNumber")
-        } catch (e: Exception) {
-            Log.e(TAG, "Error sending SMS: ${e.message}")
+        } else {
+            @Suppress("DEPRECATION")
+            SmsManager.getDefault()
         }
+
+        smsManager.sendTextMessage(phoneNumber, null, SMS_MESSAGE, null, null)
+
+        // Mark as sent immediately after successful send
+        AppPrefs.updateSmsStatus(this, timestamp, "✅ SMS Sent")
+        sendBroadcast(Intent("com.driverassist.CALL_LOG_UPDATED"))
+        Log.d(TAG, "SMS sent to $phoneNumber")
+
+    } catch (e: Exception) {
+        AppPrefs.updateSmsStatus(this, timestamp, "❌ SMS Failed")
+        sendBroadcast(Intent("com.driverassist.CALL_LOG_UPDATED"))
+        Log.e(TAG, "Error sending SMS: ${e.message}")
     }
+}
 
     private fun createNotificationChannel() {
         val channel = NotificationChannel(
