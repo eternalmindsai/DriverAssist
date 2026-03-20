@@ -7,8 +7,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.telecom.TelecomManager
-import android.telephony.SmsManager
-import android.telephony.SubscriptionManager
 import android.telephony.TelephonyManager
 import android.util.Log
 import androidx.core.content.ContextCompat
@@ -20,7 +18,6 @@ class CallReceiver : BroadcastReceiver() {
 
     companion object {
         private const val TAG = "CallReceiver"
-        private const val SMS_MESSAGE = "Hi! I am currently driving. I will call you back shortly. – Driver Assist"
         private var lastProcessedNumber: String? = null
         private var lastProcessedTime: Long = 0
     }
@@ -43,7 +40,7 @@ class CallReceiver : BroadcastReceiver() {
             lastProcessedTime = now
 
             rejectCall(context)
-           sendDrivingSms(context, incomingNumber, now)
+            sendDrivingSms(context, incomingNumber, now)
 
             val timeStr = SimpleDateFormat("dd MMM, hh:mm a", Locale.getDefault()).format(Date(now))
             AppPrefs.addCallLogEntry(context, CallLogEntry(incomingNumber, now, timeStr))
@@ -61,47 +58,28 @@ class CallReceiver : BroadcastReceiver() {
                 val telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
                 telecomManager.endCall()
                 Log.d(TAG, "Call rejected via TelecomManager")
+            } else {
+                Log.w(TAG, "ANSWER_PHONE_CALLS permission not granted")
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error rejecting call: ${e.message}")
         }
     }
 
- private fun sendDrivingSms(context: Context, phoneNumber: String, timestamp: Long) {
-    try {
-        val serviceIntent = Intent(context, SmsSenderService::class.java).apply {
-            putExtra(SmsSenderService.EXTRA_PHONE_NUMBER, phoneNumber)
-            putExtra(SmsSenderService.EXTRA_TIMESTAMP, timestamp)
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(serviceIntent)
-        } else {
-            context.startService(serviceIntent)
-        }
-        Log.d(TAG, "SMS service started for $phoneNumber")
-    } catch (e: Exception) {
-        Log.e(TAG, "Error starting SMS service: ${e.message}")
-    }
-}
-
-            val smsManager: SmsManager = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                val subscriptionId = SubscriptionManager.getDefaultSmsSubscriptionId()
-                if (subscriptionId != SubscriptionManager.INVALID_SUBSCRIPTION_ID) {
-                    context.getSystemService(SmsManager::class.java)
-                        .createForSubscriptionId(subscriptionId)
-                } else {
-                    context.getSystemService(SmsManager::class.java)
-                }
-            } else {
-                @Suppress("DEPRECATION")
-                SmsManager.getDefault()
+    private fun sendDrivingSms(context: Context, phoneNumber: String, timestamp: Long) {
+        try {
+            val serviceIntent = Intent(context, SmsSenderService::class.java).apply {
+                putExtra(SmsSenderService.EXTRA_PHONE_NUMBER, phoneNumber)
+                putExtra(SmsSenderService.EXTRA_TIMESTAMP, timestamp)
             }
-
-            smsManager.sendTextMessage(phoneNumber, null, SMS_MESSAGE, null, null)
-            Log.d(TAG, "SMS sent to $phoneNumber")
-
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(serviceIntent)
+            } else {
+                context.startService(serviceIntent)
+            }
+            Log.d(TAG, "SMS service started for $phoneNumber")
         } catch (e: Exception) {
-            Log.e(TAG, "Error sending SMS: ${e.message}")
+            Log.e(TAG, "Error starting SMS service: ${e.message}")
         }
     }
 }
