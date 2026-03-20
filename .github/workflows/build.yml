@@ -27,6 +27,24 @@ jobs:
           echo "android.useAndroidX=true" >> DriverAssist2/gradle.properties
           echo "android.enableJetifier=true" >> DriverAssist2/gradle.properties
 
+      - name: Fix missing color selectors
+        run: |
+          mkdir -p DriverAssist2/app/src/main/res/color
+          cat > DriverAssist2/app/src/main/res/color/switch_thumb_selector.xml << 'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <selector xmlns:android="http://schemas.android.com/apk/res/android">
+              <item android:color="#2ECC71" android:state_checked="true"/>
+              <item android:color="#95A5A6"/>
+          </selector>
+          EOF
+          cat > DriverAssist2/app/src/main/res/color/switch_track_selector.xml << 'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <selector xmlns:android="http://schemas.android.com/apk/res/android">
+              <item android:color="#A8E6C1" android:state_checked="true"/>
+              <item android:color="#D5D8DC"/>
+          </selector>
+          EOF
+
       - name: Generate launcher icons
         run: |
           sudo apt-get install -y imagemagick
