@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background">
+
+    <!-- Top accent bar -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:background="@color/primary" />
+
+    <!-- Content area -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="32dp">
+
+        <!-- Big emoji icon -->
+        <TextView
+            android:id="@+id/ivStepIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🚗"
+            android:textSize="72sp"
+            android:gravity="center" />
+
+        <!-- Step title -->
+        <TextView
+            android:id="@+id/tvStepTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:gravity="center"
+            android:text="Welcome to Driver Assist"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary"
+            android:lineSpacingExtra="4dp" />
+
+        <!-- Step description -->
+        <TextView
+            android:id="@+id/tvStepDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text=""
+            android:textSize="15sp"
+            android:textColor="@color/text_secondary"
+            android:lineSpacingExtra="4dp" />
+
+        <!-- Checklist (permissions step) -->
+        <LinearLayout
+            android:id="@+id/layoutChecklist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical"
+            android:background="@color/white"
+            android:padding="16dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tvCheck1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⬜  Detect incoming calls"
+                android:textSize="14sp"
+                android:textColor="@color/text_primary"
+                android:paddingVertical="6dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#F0F0F0" />
+
+            <TextView
+                android:id="@+id/tvCheck2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⬜  Reject/end incoming calls"
+                android:textSize="14sp"
+                android:textColor="@color/text_primary"
+                android:paddingVertical="6dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#F0F0F0" />
+
+            <TextView
+                android:id="@+id/tvCheck3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⬜  Send auto-reply SMS"
+                android:textSize="14sp"
+                android:textColor="@color/text_primary"
+                android:paddingVertical="6dp" />
+
+        </LinearLayout>
+
+        <!-- Sub-text hint -->
+        <TextView
+            android:id="@+id/tvStepSub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text=""
+            android:textSize="13sp"
+            android:textColor="@color/text_secondary"
+            android:fontFamily="sans-serif-light"
+            android:lineSpacingExtra="4dp"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+    <!-- Bottom: progress dots + buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center">
+
+        <!-- Progress dots -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="24dp">
+
+            <View
+                android:id="@+id/dot0"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_marginHorizontal="5dp"
+                android:background="@drawable/dot_active" />
+
+            <View
+                android:id="@+id/dot1"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_marginHorizontal="5dp"
+                android:background="@drawable/dot_inactive" />
+
+            <View
+                android:id="@+id/dot2"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_marginHorizontal="5dp"
+                android:background="@drawable/dot_inactive" />
+
+            <View
+                android:id="@+id/dot3"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_marginHorizontal="5dp"
+                android:background="@drawable/dot_inactive" />
+
+        </LinearLayout>
+
+        <!-- Main CTA button -->
+        <Button
+            android:id="@+id/btnAction"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="Let's Get Started →"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:backgroundTint="@color/primary"
+            android:textColor="@color/white"
+            app:cornerRadius="26dp" />
+
+        <!-- Skip button -->
+        <Button
+            android:id="@+id/btnSkip"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:layout_marginTop="8dp"
+            android:text="Skip for now"
+            android:textSize="14sp"
+            android:textColor="@color/text_secondary"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+</LinearLayout>
