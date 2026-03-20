@@ -16,12 +16,12 @@ class CallLogAdapter : ListAdapter<CallLogEntry, CallLogAdapter.ViewHolder>(DIFF
         return ViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val entry = getItem(position)
-        holder.binding.tvPhoneNumber.text = entry.phoneNumber
-        holder.binding.tvTimestamp.text = entry.formattedTime
-        holder.binding.tvSmsNote.text = "✉ Auto-SMS sent"
-    }
+   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    val entry = getItem(position)
+    holder.binding.tvPhoneNumber.text = entry.phoneNumber
+    holder.binding.tvTimestamp.text = entry.formattedTime
+    holder.binding.tvSmsNote.text = entry.smsStatus
+}
 
     companion object {
         val DIFF_CALLBACK = object : DiffUtil.ItemCallback<CallLogEntry>() {
