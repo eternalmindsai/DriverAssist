@@ -8,7 +8,8 @@ import com.google.gson.reflect.TypeToken
 data class CallLogEntry(
     val phoneNumber: String,
     val timestamp: Long,
-    val formattedTime: String
+    val formattedTime: String,
+    val smsStatus: String = "Sending..."
 )
 
 object AppPrefs {
@@ -55,6 +56,17 @@ object AppPrefs {
             putBoolean(KEY_ONBOARDING_DONE, done)
         }
     }
+
+    fun updateSmsStatus(context: Context, timestamp: Long, status: String) {
+    val log = getCallLog(context)
+    val index = log.indexOfFirst { it.timestamp == timestamp }
+    if (index != -1) {
+        log[index] = log[index].copy(smsStatus = status)
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit {
+            putString(KEY_CALL_LOG, gson.toJson(log))
+        }
+    }
+}
 
     fun clearCallLog(context: Context) {
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit {
