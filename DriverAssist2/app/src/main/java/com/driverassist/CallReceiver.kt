@@ -43,7 +43,7 @@ class CallReceiver : BroadcastReceiver() {
             lastProcessedTime = now
 
             rejectCall(context)
-            sendDrivingSms(context, incomingNumber)
+           sendDrivingSms(context, incomingNumber, now)
 
             val timeStr = SimpleDateFormat("dd MMM, hh:mm a", Locale.getDefault()).format(Date(now))
             AppPrefs.addCallLogEntry(context, CallLogEntry(incomingNumber, now, timeStr))
@@ -67,16 +67,22 @@ class CallReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun sendDrivingSms(context: Context, phoneNumber: String) {
-        try {
-            val hasPermission = ContextCompat.checkSelfPermission(
-                context, Manifest.permission.SEND_SMS
-            ) == PackageManager.PERMISSION_GRANTED
-
-            if (!hasPermission) {
-                Log.w(TAG, "SEND_SMS permission not granted")
-                return
-            }
+ private fun sendDrivingSms(context: Context, phoneNumber: String, timestamp: Long) {
+    try {
+        val serviceIntent = Intent(context, SmsSenderService::class.java).apply {
+            putExtra(SmsSenderService.EXTRA_PHONE_NUMBER, phoneNumber)
+            putExtra(SmsSenderService.EXTRA_TIMESTAMP, timestamp)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(serviceIntent)
+        } else {
+            context.startService(serviceIntent)
+        }
+        Log.d(TAG, "SMS service started for $phoneNumber")
+    } catch (e: Exception) {
+        Log.e(TAG, "Error starting SMS service: ${e.message}")
+    }
+}
 
             val smsManager: SmsManager = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 val subscriptionId = SubscriptionManager.getDefaultSmsSubscriptionId()
